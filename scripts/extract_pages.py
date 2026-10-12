@@ -9,7 +9,17 @@
 """
 import argparse, json, io, re, sys, os
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-import pdfplumber
+
+
+def _need_pdfplumber():
+    """惰性导入：让 --help / 参数校验在未装 pdfplumber 时也能工作。"""
+    try:
+        import pdfplumber  # noqa: F401
+        return pdfplumber
+    except ImportError:
+        sys.stderr.write(
+            '错误: 需要 pdfplumber。安装: pip install pdfplumber\n')
+        sys.exit(2)
 
 PATTERNS = [
     (r'^Definition\s*(\d*)', 'definition'),
@@ -32,6 +42,7 @@ def main():
     args = ap.parse_args()
 
     data = []
+    pdfplumber = _need_pdfplumber()
     with pdfplumber.open(args.pdf) as pdf:
         for i, p in enumerate(pdf.pages):
             t = p.extract_text() or ''

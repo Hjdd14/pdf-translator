@@ -11,7 +11,16 @@
 """
 import argparse, io, sys
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-import pdfplumber
+
+
+def _need_pdfplumber():
+    """惰性导入：让 --help / 参数校验在未装 pdfplumber 时也能工作。"""
+    try:
+        import pdfplumber  # noqa: F401
+        return pdfplumber
+    except ImportError:
+        sys.stderr.write('错误: 需要 pdfplumber。安装: pip install pdfplumber\n')
+        sys.exit(2)
 
 
 def main():
@@ -25,7 +34,7 @@ def main():
         print(s)
         lines.append(s)
 
-    with pdfplumber.open(args.pdf) as pdf:
+    with _need_pdfplumber().open(args.pdf) as pdf:
         n = len(pdf.pages)
         sizes = {}
         total = 0

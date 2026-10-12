@@ -16,7 +16,16 @@ Usage:
 r"""
 import argparse, io, re, sys, collections
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-import pdfplumber
+
+
+def _need_pdfplumber():
+    """惰性导入：让 --help / 参数校验在未装 pdfplumber 时也能工作。"""
+    try:
+        import pdfplumber  # noqa: F401
+        return pdfplumber
+    except ImportError:
+        sys.stderr.write('错误: 需要 pdfplumber。安装: pip install pdfplumber\n')
+        sys.exit(2)
 
 DEFAULT_ALLOW = set('''
 von Neumann Morgenstern Nash Shapley Shubik Vorobev Vorob'ev Petrosyan Zenkevich
@@ -38,6 +47,7 @@ fail = 0
 
 
 def pages(path):
+    pdfplumber = _need_pdfplumber()
     with pdfplumber.open(path) as pdf:
         return [p.extract_text() or '' for p in pdf.pages]
 
