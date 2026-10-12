@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Translator — 英文 PDF 教材 → 中文 PDF</title>
+<meta name="description" content="把英文 PDF 教材 / 幻灯片完整翻译为中文 PDF：保持数学公式、表格、图片与版式，逐页一一对应，零缺失。支持智能体团队并行翻译。">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+</head>
+<body>
+
+<!-- ============ 导航 ============ -->
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="dot"></span>PDF Translator</a>
+    <div class="nav-links">
+      <a href="#what">这是什么</a>
+      <a href="#install">安装</a>
+      <a href="#flow">工作流程</a>
+      <a href="#tools">工具集</a>
+      <a href="#cases">实测</a>
+    </div>
+    <span id="clock" style="font:12px ui-monospace,Menlo,monospace;color:var(--ink-soft);margin-left:12px"></span>
+  </div>
+</nav>
+
+<a id="top"></a>
+
+<!-- ============ Hero ============ -->
+<header class="hero">
+  <div class="wrap">
+    <span class="kicker">Agent Skill · 学术翻译流水线</span>
+    <h1>把英文 PDF 教材<br>完整翻译成<span class="accent">中文 PDF</span></h1>
+    <p class="sub">
+      保持数学公式、表格、图片与版式 —— <b>逐页一一对应，零缺失</b>。<br>
+      装进 AI 助手后说一句，它跑完 <code>勘察 → 解析 → 分片 → 团队并行翻译 → 编译 → 验收</code> 全流程。
+    </p>
+
+    <div class="terminal">
+      <div class="terminal-bar"><i></i><i></i><i></i><span>bash — pdf-translator</span></div>
+      <pre><span class="c-prompt">$</span> git clone https://github.com/&lt;you&gt;/pdf-translator.git \
+      ~/.claude/skills/pdf-translator
+
+<span class="c-prompt">$</span> pip install pdfplumber
+
+<span class="c-dim"># 然后对 AI 说：</span>
+<span class="c-prompt">&gt;</span> <span class="c-str">"用 pdf-translator 翻译 GameTheorySlidesV2.pdf，
+   可以用智能体团队加快速度"</span></pre>
+    </div>
+
+    <p style="margin-top:22px">
+      <button class="btn" data-copy="git clone https://github.com/&lt;you&gt;/pdf-translator.git ~/.claude/skills/pdf-translator">复制克隆命令</button>
+    </p>
+  </div>
+</header>
+
+<!-- ============ 这是什么 ============ -->
+<section id="what">
+  <div class="wrap">
+    <h2>这是什么</h2>
+    <p class="lead">一个 Agent Skill：让 AI 编程助手具备「学术 PDF 中译」的完整工程能力。</p>
+    <div class="grid">
+      <div class="card">
+        <div class="icon">📑</div>
+        <h3>逐页零缺失</h3>
+        <p>每个源页 / 每个 slide 对应一个输出单元，一条 bullet 都不丢；自动门禁逐页核对数字与编号。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧮</div>
+        <h3>公式原样保留</h3>
+        <p>数学公式不翻译；附带 <code>(cid:xx)</code> 乱码速查表，把碎裂的文本层重组回正确 LaTeX。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🎨</div>
+        <h3>版式完全还原</h3>
+        <p>PPT 的 PDF → Beamer 16:9；讲义 → A4 ctexart。页幅、字号、边距、定理样式、编号全部按源复刻。</p>
+      </div>
+      <div class="card">
+        <div class="icon">⚡</div>
+        <h3>团队并行加速</h3>
+        <p>按内容主题分片，多个子智能体同时翻译，写域互斥零冲突。263 页实测 ≈ 串行 1/7 时间。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🛡️</div>
+        <h3>四重自动门禁</h3>
+        <p>单元数 / 数字多重集 / 残留英文 / 环境编号逐页比对，再加人工视觉抽查才放行。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧰</div>
+        <h3>10 个通用工具</h3>
+        <p>勘察、提取、分片、编译、编号重排、溢出修复、验收——全是参数化 CLI，换项目直接复用。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 安装 ============ -->
+<section id="install">
+  <div class="wrap">
+    <h2>安装</h2>
+    <p class="lead">三条命令装好，之后对 AI 说人话即可。</p>
+    <div class="opt">
+      <details open>
+        <summary>1 · 克隆到 skills 目录</summary>
+        <div>
+<pre class="code">git clone https://github.com/&lt;you&gt;/pdf-translator.git \
+      ~/.claude/skills/pdf-translator</pre>
+          <p><button class="btn" data-copy="git clone https://github.com/&lt;you&gt;/pdf-translator.git ~/.claude/skills/pdf-translator">复制</button></p>
+        </div>
+      </details>
+      <details>
+        <summary>2 · 安装依赖</summary>
+        <div>
+<pre class="code">pip install pdfplumber
+
+# poppler-utils（pdfimages / pdftoppm）
+#   Windows : conda install poppler   或下载并加入 PATH
+#   macOS   : brew install poppler
+#   Linux   : sudo apt-get install poppler-utils
+
+# TeX Live / MiKTeX（需含 xelatex 与 ctex 宏包）</pre>
+        </div>
+      </details>
+      <details>
+        <summary>3 · 环境自检</summary>
+        <div>
+<pre class="code">python scripts/compile_latex.py --check   # xelatex / ctex / pdfplumber
+python scripts/probe_pdf.py book.pdf       # 勘察 PDF</pre>
+        </div>
+      </details>
+      <details>
+        <summary>触发方式</summary>
+        <div>
+          <p style="margin:0 0 10px;color:var(--ink-soft);font-size:14px">
+            直接说人话，skill 会自动判定版式并全流程执行：</p>
+<pre class="code">"用 pdf-translator 翻译 GameTheorySlidesV2.pdf，
+ 这是 PPT 的 PDF 版，用 LaTeX 编译输出中文版，
+ 不可以缺失任何内容，可以用智能体团队加快速度"</pre>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 工作流程 ============ -->
+<section id="flow">
+  <div class="wrap">
+    <h2>工作流程</h2>
+    <p class="lead">六个阶段，每阶段都有对应工具，不靠手写临时脚本。</p>
+    <ol class="flow">
+      <li>
+        <b>勘察</b>
+        <span><code>probe_pdf.py</code> 判定文本版/扫描版、页幅、位图数量 → 选定 Beamer 或 ctexart 版式</span>
+      </li>
+      <li>
+        <b>解析</b>
+        <span><code>extract_pages.py</code> 逐页提取为 <code>pages.json</code>，带上 <code>Definition 3</code>、<code>Theorem 5</code> 等环境标记</span>
+      </li>
+      <li>
+        <b>分类标记</b>
+        <span>公式 / 图表 / 表格分区；<code>(cid:xx)</code> 乱码按速查表重组为 LaTeX</span>
+      </li>
+      <li>
+        <b>分片 + 团队并行</b>
+        <span><code>make_digests.py</code> 按主题切片，多个子智能体同时翻译，写域互斥</span>
+      </li>
+      <li>
+        <b>编译与校正</b>
+        <span>XeLaTeX 编译 → 修错 → <code>renumber_envs.py</code> 对齐编号 → <code>fix_*.py</code> 修溢出 → 复编译至 0 error</span>
+      </li>
+      <li>
+        <b>验收与交付</b>
+        <span><code>verify_translation.py</code> 四重门禁 + 视觉抽查 → 交付 <code>&lt;Name&gt;_中文版.pdf</code></span>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ 工具集 ============ -->
+<section id="tools">
+  <div class="wrap">
+    <h2>工具集</h2>
+    <p class="lead">10 个参数化 CLI 工具，任何项目可直接复用。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>阶段</th><th>脚本</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td>P0</td><td><code>probe_pdf.py</code></td><td>勘察：页数 / 文本量 / 页幅 / 图片 / 表格</td></tr>
+          <tr><td>P1</td><td><code>extract_pages.py</code></td><td>逐页提取 + 环境标记 → <code>pages.json</code></td></tr>
+          <tr><td>P3</td><td><code>make_digests.py</code></td><td>按分片生成翻译 digest</td></tr>
+          <tr><td>P4</td><td><code>compile_latex.py</code></td><td>编译 + 环境自检 + 错误提取</td></tr>
+          <tr><td>P4</td><td><code>renumber_envs.py</code></td><td>定义 / 定理 / 例 / 练习编号按源重排</td></tr>
+          <tr><td>P4</td><td><code>renumber_remarks.py</code></td><td>Remark「章.序号」编号</td></tr>
+          <tr><td>P4</td><td><code>move_setcounter.py</code></td><td>修 beamer overlay 吞 <code>\setcounter</code></td></tr>
+          <tr><td>P4</td><td><code>fix_frame_overflow.py</code></td><td>自动给超高 frame 加 <code>[shrink=n]</code></td></tr>
+          <tr><td>P4</td><td><code>fix_leading_group.py</code></td><td>修 beamer 吞行首 <code>{\small X}</code></td></tr>
+          <tr><td>P5</td><td><code>verify_translation.py</code></td><td>四重门禁：单元数 / 数字 / 英文 / 编号</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 实测 ============ -->
+<section id="cases">
+  <div class="wrap">
+    <h2>实测案例</h2>
+    <p class="lead">263 页博弈论幻灯片（Beamer 16:9），一次交付。</p>
+    <div class="grid">
+      <div class="card"><div class="icon">263 / 263</div><h3>单元对应</h3><p>每个源页一个 frame，逐页锚点可追溯</p></div>
+      <div class="card"><div class="icon">0 error</div><h3>编译干净</h3><p>overfull > 15pt 亦为 0</p></div>
+      <div class="card"><div class="icon">1–102</div><h3>编号对齐</h3><p>定义 / 定理 / 引理 / 推论 / 例 / 练习全部对齐源</p></div>
+      <div class="card"><div class="icon">✓</div><h3>视觉抽查</h3><p>首页 / 表格页 / 矩阵页 / 证明页 / 末页通过</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center">
+    <span><b>PDF Translator</b> · MIT License</span>
+    <span class="sep">·</span>
+    <a href="https://github.com/&lt;you&gt;/pdf-translator" style="color:var(--indigo)">GitHub</a>
+    <span class="sep">·</span>
+    <a href="https://github.com/&lt;you&gt;/pdf-translator/issues" style="color:var(--indigo)">Issues</a>
+    <span class="sep">·</span>
+    <span>Beamer 幻灯片 · A4 讲义 · 扫描件 OCR</span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

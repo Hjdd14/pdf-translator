@@ -1,0 +1,36 @@
+name: 语法检查（Python + LaTeX 模板）
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  python:
+    name: Python 脚本可导入 / --help 可用
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: 编译检查 + --help 冒烟测试
+        run: |
+          python -m py_compile scripts/*.py
+          for f in scripts/*.py; do
+            python "$f" --help > /dev/null || { echo "::error::$f --help 失败"; exit 1; }
+          done
+          echo "全部 $(ls scripts/*.py | wc -l) 个脚本通过"
+
+  markdown:
+    name: Markdown 链接与结构
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 检查 SKILL.md 必含章节
+        run: |
+          for kw in "核心铁律" "工具索引" "Phase 0" "Phase 5" "触发指令"; do
+            grep -q "$kw" SKILL.md || { echo "::error::SKILL.md 缺少 $kw"; exit 1; }
+          done
+          echo "SKILL.md 结构完整"

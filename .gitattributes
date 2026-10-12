@@ -1,0 +1,18 @@
+# 让 .tex / .py / .md 在 GitHub 上以 LF 入库，Windows 检出也不反复出现全文件 diff
+*.tex text eol=lf
+*.py  text eol=lf
+*.md  text eol=lf
+*.txt text eol=lf
+
+# 二进制素材不做行尾转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+
+# 大文件 / 生成物不参与语言统计与 diff
+*.json linguist-generated=true
+*.pdf  linguist-documentation=true
+
+# 合并时把 SKILL.md 视为单行单元，减少自动合并冲突
+SKILL.md merge=union
