@@ -50,6 +50,16 @@ qa/
 build/
 output_cn.pdf
 
+# ============ 仓库内临时探针/草稿（不进库） ============
+_probe*
+_draft*
+_*.png
+_*.txt
+_*.json
+_*.log
+qa_p*.png
+qa_*.png
+
 # ============ OS ============
 .DS_Store
 Thumbs.db
@@ -71,3 +81,4 @@ _backup*/
 # ============ 其他 ============
 node_modules/
 *.tmp
+*.pyc
